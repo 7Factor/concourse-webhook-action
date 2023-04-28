@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeAll } from '@jest/globals'
-import { getActionOutput, runAction, setActionInputs } from './action'
+import { getActionError, getActionOutput, runAction, setActionInputs } from './action'
 
 describe('GitHub Action', () => {
   describe('milliseconds input is provided', () => {
@@ -23,7 +23,12 @@ describe('GitHub Action', () => {
     })
 
     it('action fails', () => {
-      expect(runAction).toThrowError('Command failed')
+      const output = runAction()
+      console.log(output)
+
+      const error = getActionError(output)
+      expect(error).not.toBeNull()
+      expect(error).toEqual('milliseconds not a number')
     })
   })
 })

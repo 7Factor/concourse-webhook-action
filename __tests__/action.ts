@@ -30,12 +30,22 @@ export const setActionInputs = (inputs: { [key: string]: string | null } = {}): 
 }
 
 export const getActionOutput = (consoleOutput: string | Buffer, outputName: string): string | null => {
-  const output = consoleOutput.toString()
-  const regex = new RegExp(`::set-output name=${outputName}::(.*)${os.EOL}`)
+  const output = readOutput(consoleOutput, 'set-output')
+  const regex = new RegExp(` name=${outputName}::(.*)$`)
   const match = output.match(regex)
-  if (match) {
-    return match[1]
-  } else {
-    return null
-  }
+  return match ? match[1] : null
+}
+
+export const getActionError = (consoleOutput: string | Buffer): string | null => {
+  const output = readOutput(consoleOutput, 'error') ?? null
+  const regex = new RegExp(`::(.*)$`)
+  const match = output.match(regex)
+  return match ? match[1] : null
+}
+
+const readOutput = (consoleOutput: string | Buffer, key: string): string => {
+  const output = consoleOutput.toString()
+  const regex = new RegExp(`::${key}(.*)${os.EOL}`)
+  const match = output.match(regex)
+  return match ? match[1] : ''
 }
