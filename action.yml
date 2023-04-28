@@ -1,11 +1,30 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: Trigger Concourse webhook
+description: Triggers a resource check webhook in a Concourse pipeline
+author: 7Factor
+
 inputs:
-  milliseconds: # change this
+  concourse-url:
+    description: The base URL for your Concourse CI
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  concourse-team:
+    description: The Concourse team where the pipeline lives
+    required: true
+    default: main
+  concourse-pipeline:
+    description: The Concourse pipeline where the resource lives
+    required: true
+  pipeline-resource:
+    description: The pipeline resource for which a check is to be triggered
+    required: true
+  resource-webhook-token:
+    description:
+      The secret value used for the 'webhook_token' property of the pipeline
+      resource
+    required: true
+  pipeline-variables:
+    description: A mapping of pipeline variables to their values
+    required: false
+
 runs:
   using: 'node16'
   main: 'dist/index.js'
