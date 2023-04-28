@@ -10,11 +10,12 @@ export const runAction = (inputs: { [key: string]: string } | null = null): stri
 
   const np = process.execPath
   const ip = path.join(__dirname, '..', 'lib', 'main.js')
-  const options: cp.ExecFileSyncOptions = {
+  const options: cp.SpawnOptions = {
     env: process.env,
   }
 
-  return cp.execFileSync(np, [ip], options).toString()
+  const proc = cp.spawnSync(np, [ip], options)
+  return proc.stdout.toString()
 }
 
 export const setActionInputs = (inputs: { [key: string]: string | null } = {}): void => {
