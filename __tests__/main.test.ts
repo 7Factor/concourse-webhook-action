@@ -9,6 +9,7 @@ describe('GitHub Action', () => {
 
     it('outputs time', () => {
       const output = runAction()
+      console.log(output)
 
       const timeOutput = getActionOutput(output, 'time')
       expect(timeOutput).not.toBeNull()
