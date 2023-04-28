@@ -1,32 +1,30 @@
-import { describe, expect, it, beforeAll } from '@jest/globals'
-import { getActionError, getActionOutput, runAction, setActionInputs } from './action'
+import { describe, expect, it, beforeEach } from '@jest/globals'
+import ActionRunner from './action_runner'
 
 describe('GitHub Action', () => {
+  const actionRunner = new ActionRunner()
+
   describe('milliseconds input is provided', () => {
-    beforeAll(() => {
-      setActionInputs({ INPUT_MILLISECONDS: '500' })
+    beforeEach(() => {
+      actionRunner.setInput('milliseconds', '500')
     })
 
     it('outputs time', () => {
-      const output = runAction()
+      const output = actionRunner.run()
       console.log(output)
 
-      const timeOutput = getActionOutput(output, 'time')
-      expect(timeOutput).not.toBeNull()
+      const timeOutput = actionRunner.outputs['time']
+      expect(timeOutput).toBeDefined()
       expect(timeOutput).toMatch(/\d{2}:\d{2}:\d{2}/)
     })
   })
 
   describe('milliseconds input is NOT provided', () => {
-    beforeAll(() => {
-      setActionInputs({ INPUT_MILLISECONDS: null })
-    })
-
     it('action fails', () => {
-      const output = runAction()
+      const output = actionRunner.run()
       console.log(output)
 
-      const error = getActionError(output)
+      const error = actionRunner.error
       expect(error).not.toBeNull()
       expect(error).toEqual('milliseconds not a number')
     })
