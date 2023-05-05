@@ -77,7 +77,7 @@ export default class ActionRunner {
    * @param callback The code to call that needs access to the action's inputs.
    * @returns The return value of the callback, if any.
    */
-  call(callback: () => unknown): unknown {
+  async call(callback: () => Promise<unknown>): Promise<unknown> {
     this.setEnv()
     return callback()
   }
