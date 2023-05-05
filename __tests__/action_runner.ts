@@ -79,7 +79,10 @@ export default class ActionRunner {
    */
   async call(callback: () => Promise<unknown>): Promise<unknown> {
     this.setEnv()
-    return callback()
+
+    const output = await callback()
+    this.collectOutputs()
+    return output
   }
 
   private createOutputsFile(): void {
