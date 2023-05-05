@@ -10,6 +10,11 @@ const outputsFile = path.join(tmpDir, 'outputs')
 
 const githubOutputEnvKey = 'GITHUB_OUTPUT'
 
+/**
+ * A helper class for testing GitHub Actions. This class emulates how GitHub Actions runs the action by running it in a
+ * child process (see {@link run}). Any inputs set by {@link setInput} or {@link setInputs} will be available to the
+ * action through {@link @actions/core.getInput} as they would be when run in GitHub Actions.
+ */
 export default class ActionRunner {
   outputs: { [key: string]: string } = {}
   error: string | null = null
@@ -26,16 +31,34 @@ export default class ActionRunner {
     })
   }
 
+  /**
+   * Sets an input for the action. Must be called before {@link run} or {@link call} for the inputs to have an effect.
+   *
+   * @param key The name of the input as it appears in action.yml ('milliseconds', not 'INPUT_MILLISECONDS'.)
+   * @param value The value of the input.
+   */
   setInput(key: string, value: string): void {
     this.inputs[`INPUT_${key.replace(/ /g, '_').toUpperCase()}`] = value
   }
 
+  /**
+   * Set multiple inputs at once. Must be called before {@link run} or {@link call} for the inputs to have an effect.
+   *
+   * @param inputs The inputs to set. See {@link setInput} for details.
+   */
   setInputs(inputs: { [key: string]: string }): void {
     for (const key in inputs) {
       this.setInput(key, inputs[key])
     }
   }
 
+  /**
+   * Emulates how GitHub Actions runs the action by running it in a child process. Any inputs set by {@link setInput} or
+   * {@link setInputs} will be available to the action through {@link @actions/core.getInput} as they would be when run
+   * in GitHub Actions.
+   *
+   * @returns The stdout of the action.
+   */
   run(): string {
     this.outputs = {}
     this.error = null
