@@ -16,8 +16,18 @@ const githubOutputEnvKey = 'GITHUB_OUTPUT'
  * action through {@link @actions/core.getInput} as they would be when run in GitHub Actions.
  */
 export default class ActionRunner {
+  /**
+   * The outputs set by the action via {@link @actions/core.setOutput}. Will be empty until {@link run} or {@link call}
+   * is called and will be reset after each test.
+   */
   outputs: { [key: string]: string } = {}
+
+  /**
+   * The error set by the action via {@link @actions/core.setFailed}. Will be null until {@link run} is called and will
+   * be reset after each test. Due to the way this error has to be parsed, it is not set when {@link call} is used.
+   */
   error: string | null = null
+
   private inputs: { [key: string]: string } = {}
 
   constructor() {
@@ -53,9 +63,14 @@ export default class ActionRunner {
   }
 
   /**
-   * Emulates how GitHub Actions runs the action by running it in a child process. Any inputs set by {@link setInput} or
-   * {@link setInputs} will be available to the action through {@link @actions/core.getInput} as they would be when run
-   * in GitHub Actions.
+   * Emulates how GitHub Actions runs the action by running it in a child process.
+   * <br/>
+   * Any inputs set by {@link setInput} or {@link setInputs} will be available to the action through
+   * {@link @actions/core.getInput} as they would be when run in GitHub Actions.
+   * <br/>
+   * Any outputs set by the action via {@link @actions/core.setOutput} will be available through {@link outputs}.
+   * <br/>
+   * Any errors set by the action via {@link @actions/core.setFailed} will be available through {@link error}.
    *
    * @returns The stdout of the action.
    */
@@ -70,9 +85,12 @@ export default class ActionRunner {
   }
 
   /**
-   * Provides a way to call arbitrary code in the same environment as the action. Any inputs set by {@link setInput} or
-   * {@link setInputs} will be available to the action through {@link @actions/core.getInput} as they would be when run
-   * in GitHub Actions.
+   * Provides a way to call arbitrary code in the same environment as the action.
+   * <br/>
+   * Any inputs set by {@link setInput} or {@link setInputs} will be available to the action through
+   * {@link @actions/core.getInput} as they would be when run in GitHub Actions.
+   * <br/>
+   * Any outputs set in the callback via {@link @actions/core.setOutput} will be available through {@link outputs}.
    *
    * @param callback The code to call that needs access to the action's inputs.
    * @returns The return value of the callback, if any.
