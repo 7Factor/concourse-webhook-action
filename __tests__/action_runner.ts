@@ -69,6 +69,19 @@ export default class ActionRunner {
     return output
   }
 
+  /**
+   * Provides a way to call arbitrary code in the same environment as the action. Any inputs set by {@link setInput} or
+   * {@link setInputs} will be available to the action through {@link @actions/core.getInput} as they would be when run
+   * in GitHub Actions.
+   *
+   * @param callback The code to call that needs access to the action's inputs.
+   * @returns The return value of the callback, if any.
+   */
+  call(callback: () => unknown): unknown {
+    this.setEnv()
+    return callback()
+  }
+
   private createOutputsFile(): void {
     if (!fs.existsSync(tmpDir)) {
       fs.mkdirSync(tmpDir)
