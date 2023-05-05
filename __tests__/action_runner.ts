@@ -27,7 +27,7 @@ export default class ActionRunner {
   }
 
   setInput(key: string, value: string): void {
-    this.inputs[`INPUT_${key.toUpperCase()}`] = value
+    this.inputs[`INPUT_${key.replace(/ /g, '_').toUpperCase()}`] = value
   }
 
   setInputs(inputs: { [key: string]: string }): void {
