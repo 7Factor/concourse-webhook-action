@@ -47,8 +47,9 @@ export default class ActionRunner {
    * @param key The name of the input as it appears in action.yml ('milliseconds', not 'INPUT_MILLISECONDS'.)
    * @param value The value of the input.
    */
-  setInput(key: string, value: string): void {
-    this.inputs[`INPUT_${key.replace(/ /g, '_').toUpperCase()}`] = value
+  setInput(key: string, value: string | number | boolean | [] | {}): void {
+    this.inputs[`INPUT_${key.replace(/ /g, '_').toUpperCase()}`] =
+      typeof value === 'string' ? value : JSON.stringify(value)
   }
 
   /**
@@ -56,7 +57,7 @@ export default class ActionRunner {
    *
    * @param inputs The inputs to set. See {@link setInput} for details.
    */
-  setInputs(inputs: { [key: string]: string }): void {
+  setInputs(inputs: { [key: string]: string | number | boolean | [] | {} }): void {
     for (const key in inputs) {
       this.setInput(key, inputs[key])
     }
