@@ -155,7 +155,6 @@ export default class ActionRunner {
 
   private getActionError(consoleOutput: string | Buffer): string | null {
     const output = consoleOutput.toString()
-    console.log(output)
 
     const regex = new RegExp(`::error::(.*)${os.EOL}`)
     const match = output.match(regex)
