@@ -127,14 +127,13 @@ function run() {
 }
 const sendWebhookRequest = (inputs) => __awaiter(void 0, void 0, void 0, function* () {
     const webhookUrl = (0, webhook_1.buildWebhookUrl)(inputs);
-    core.info(`Sending POST request to ${getUrlWithRedactedToken(webhookUrl, inputs.resourceWebhookToken)}`);
+    core.info(`Sending POST request to ${getUrlWithRedactedToken(webhookUrl)}`);
     yield (0, webhook_1.triggerWebhook)(webhookUrl, inputs.resourceWebhookToken);
 });
 exports.sendWebhookRequest = sendWebhookRequest;
-const getUrlWithRedactedToken = (url, webhookToken) => {
+const getUrlWithRedactedToken = (url) => {
     const urlWithRedactedToken = new url_1.URL(url.toString());
-    const redactedToken = webhookToken.replace(/./g, '*');
-    urlWithRedactedToken.searchParams.append('webhook_token', redactedToken);
+    urlWithRedactedToken.searchParams.append('webhook_token', 'REDACTED');
     return urlWithRedactedToken.toString();
 };
 run();
