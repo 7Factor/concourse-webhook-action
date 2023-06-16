@@ -17,15 +17,14 @@ async function run(): Promise<void> {
 export const sendWebhookRequest = async (inputs: Inputs): Promise<void> => {
   const webhookUrl = buildWebhookUrl(inputs)
 
-  core.info(`Sending POST request to ${getUrlWithRedactedToken(webhookUrl, inputs.resourceWebhookToken)}`)
+  core.info(`Sending POST request to ${getUrlWithRedactedToken(webhookUrl)}`)
 
   await triggerWebhook(webhookUrl, inputs.resourceWebhookToken)
 }
 
-const getUrlWithRedactedToken = (url: URL, webhookToken: string): string => {
+const getUrlWithRedactedToken = (url: URL): string => {
   const urlWithRedactedToken = new URL(url.toString())
-  const redactedToken = webhookToken.replace(/./g, '*')
-  urlWithRedactedToken.searchParams.append('webhook_token', redactedToken)
+  urlWithRedactedToken.searchParams.append('webhook_token', 'REDACTED')
   return urlWithRedactedToken.toString()
 }
 
