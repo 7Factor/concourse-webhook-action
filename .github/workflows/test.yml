@@ -21,10 +21,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./ # uses the action in the current repo
         with:
-          concourseUrl: 'https://concourse.example.com'
-          concourseTeam: 'my-team'
-          concoursePipeline: 'my-pipeline'
-          pipelineResource: 'my-resource'
-          resourceWebhookToken: 'my-token'
-          pipelineVariables:
-            'my-var': 'my-value'
+          concourseUrl: https://concourse.example.com
+          concourseTeam: my-team
+          concoursePipeline: my-pipeline
+          pipelineResource: my-resource
+          resourceWebhookToken: my-token
+          pipelineVariables: '{"my-var": "my-value"}'
