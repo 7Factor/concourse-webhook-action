@@ -1,19 +1,14 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import axios from 'axios'
+import testInputs from './test_inputs'
 import { Inputs } from '../src/inputs'
 import { buildWebhookUrl, triggerWebhook } from '../src/webhook'
 
 jest.mock('axios')
 const mockedAxios = axios as jest.Mocked<typeof axios>
 
-const concourseUrl = 'https://concourse.example.com'
-const concourseTeam = 'my-team'
-const concoursePipeline = 'my-pipeline'
-const pipelineResource = 'my-resource'
-const resourceWebhookToken = 'my-token'
-const pipelineVariables = {
-  'my-var': 'my-value',
-}
+const { concourseUrl, concourseTeam, concoursePipeline, pipelineResource, resourceWebhookToken, pipelineVariables } =
+  testInputs
 
 describe('When calling buildWebhookUrl', () => {
   describe('given a set of inputs without pipeline variables', () => {

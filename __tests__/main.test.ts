@@ -1,32 +1,50 @@
-import { describe, expect, it, beforeEach } from '@jest/globals'
+import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import ActionRunner from './action_runner'
+import testInputs from './test_inputs'
+import { triggerWebhook } from '../src/webhook'
+import { sendWebhookRequest } from '../src/main'
 
-describe('GitHub Action', () => {
+jest.mock('../src/webhook', () => ({
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  ...(jest.requireActual('../src/webhook') as {}),
+  triggerWebhook: jest.fn(),
+}))
+const mockedTriggerWebhook = triggerWebhook as jest.MockedFunction<typeof triggerWebhook>
+
+const { concourseUrl, concourseTeam, concoursePipeline, pipelineResource, resourceWebhookToken, pipelineVariables } =
+  testInputs
+
+describe('When run as a GitHub Action', () => {
   const actionRunner = new ActionRunner()
 
-  describe('milliseconds input is provided', () => {
+  describe('given the required action inputs are provided', () => {
     beforeEach(() => {
-      actionRunner.setInput('milliseconds', '500')
+      actionRunner.setInputs({
+        'concourse-url': concourseUrl,
+        'concourse-team': concourseTeam,
+        'concourse-pipeline': concoursePipeline,
+        'pipeline-resource': pipelineResource,
+        'resource-webhook-token': resourceWebhookToken,
+        'pipeline-variables': JSON.stringify(pipelineVariables),
+      })
     })
 
-    it('outputs time', () => {
+    it('runs with error', () => {
       const output = actionRunner.run()
       console.log(output)
 
-      const timeOutput = actionRunner.outputs['time']
-      expect(timeOutput).toBeDefined()
-      expect(timeOutput).toMatch(/\d{2}:\d{2}:\d{2}/)
+      // The action runner runs the action in a child process meaning we can't mock axios. The expected result is this:
+      expect(actionRunner.error).toEqual(`getaddrinfo ENOTFOUND ${concourseUrl.replace('https://', '')}`)
     })
   })
+})
 
-  describe('milliseconds input is NOT provided', () => {
-    it('action fails', () => {
-      const output = actionRunner.run()
-      console.log(output)
+describe('When calling sendWebhookRequest', () => {
+  describe('given the action inputs are provided', () => {
+    it('the URL provided to triggerWebhook does not include the webhook token', async () => {
+      await sendWebhookRequest(testInputs)
 
-      const error = actionRunner.error
-      expect(error).not.toBeNull()
-      expect(error).toEqual('milliseconds not a number')
+      expect(mockedTriggerWebhook.mock.calls[0][0].toString()).not.toContain(resourceWebhookToken)
     })
   })
 })
