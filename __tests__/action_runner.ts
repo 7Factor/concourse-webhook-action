@@ -20,7 +20,7 @@ export default class ActionRunner {
    * The outputs set by the action via {@link @actions/core.setOutput}. Will be empty until {@link run} or {@link call}
    * is called and will be reset after each test.
    */
-  outputs: { [key: string]: string } = {}
+  outputs: Record<string, string> = {}
 
   /**
    * The error set by the action via {@link @actions/core.setFailed}. Will be null until {@link run} is called and will
@@ -28,7 +28,7 @@ export default class ActionRunner {
    */
   error: string | null = null
 
-  private inputs: { [key: string]: string } = {}
+  private inputs: Record<string, string> = {}
 
   constructor() {
     beforeEach(() => {
@@ -57,7 +57,7 @@ export default class ActionRunner {
    *
    * @param inputs The inputs to set. See {@link setInput} for details.
    */
-  setInputs(inputs: { [key: string]: string | number | boolean | [] | {} }): void {
+  setInputs(inputs: Record<string, string | number | boolean | [] | {}>): void {
     for (const key in inputs) {
       this.setInput(key, inputs[key])
     }
